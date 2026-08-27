@@ -1,0 +1,19 @@
+:root {
+  --page: #09090b;
+  --panel: #121215;
+  --edge: #24242a;
+  --ink: #f4f4f5;
+  --muted: #a1a1aa;
+  --faint: #6b6b76;
+  --accent: #e0b877;
+  --rising: #8bbf7a;
+  --fading: #c97a7a;
+
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+
+  --edge-round: 14px;
+  --edge-round-small: 9px;
+  --panel-pad: 22px;
+  --band-gap: 18px;
+}
