@@ -32,7 +32,7 @@ export function ConnectChannel({ onConnect, working, workingStep, failure }: Con
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6">
+    <div className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-6">
       <div className="w-full max-w-[440px]">
         <div className="mb-9 flex items-center gap-2.5">
           <MarkIcon size={24} />
