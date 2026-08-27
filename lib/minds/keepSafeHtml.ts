@@ -85,9 +85,15 @@ function rebuildInlineTag(whole: string, rawName: string): string {
   return "<" + name + ">";
 }
 
+function dropEmptyTags(html: string): string {
+  let cleaned = html;
+  for (let pass = 0; pass < 3; pass = pass + 1) {
+    cleaned = cleaned.replace(/<([a-z]+)>\s*<\/>/gi, "");
+  }
+  return cleaned;
+}
+
 export function keepInlineHtml(html: string): string {
-  return dropDangerousBlocks(html)
-    .replace(/<\/?([a-zA-Z0-9]+)[^>]*>/g, rebuildInlineTag)
-    .replace(/\s+/g, " ")
-    .trim();
+  const kept = dropDangerousBlocks(html).replace(/<\/?([a-zA-Z0-9]+)[^>]*>/g, rebuildInlineTag);
+  return dropEmptyTags(kept).replace(/\s+/g, " ").trim();
 }
