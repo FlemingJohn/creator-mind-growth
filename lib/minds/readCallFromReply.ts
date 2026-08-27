@@ -2,11 +2,12 @@ import type { Call } from "@/types/call";
 import type { Result } from "@/types/result";
 import { fail, succeed } from "@/types/result";
 import { describeFailure } from "@/lib/errors/describeFailure";
-import { readLabelled, readMultiLineLabelled, readWordChoice } from "./readReply";
+import { readPlainText } from "./keepSafeHtml";
+import { readLabelled, readLabelledHtml, readWordChoice } from "./readReply";
 
 export function readCallFromReply(replyText: string, channelId: string): Result<Call> {
   const title = readLabelled(replyText, "TITLE");
-  const reason = readMultiLineLabelled(replyText, "REASON", ["RISK", "UPSIDE"]);
+  const reason = readLabelledHtml(replyText, "REASON", ["RISK", "UPSIDE"]);
 
   if (title.length === 0 || reason.length === 0) {
     return fail(describeFailure("mind_reply_unreadable"));
@@ -29,7 +30,7 @@ export function readCallFromReply(replyText: string, channelId: string): Result<
 
 export function readVerdictFromReply(replyText: string): Result<{ outcome: "hit" | "miss"; lesson: string }> {
   const word = readLabelled(replyText, "VERDICT").toLowerCase();
-  const lesson = readMultiLineLabelled(replyText, "LESSON", []);
+  const lesson = readLabelledHtml(replyText, "LESSON", []);
 
   if (word.length === 0) {
     return fail(describeFailure("mind_reply_unreadable"));
@@ -37,7 +38,7 @@ export function readVerdictFromReply(replyText: string): Result<{ outcome: "hit"
 
   return succeed({
     outcome: word.includes("miss") ? "miss" : "hit",
-    lesson: lesson.length > 0 ? lesson : replyText
+    lesson: readPlainText(lesson).length > 0 ? lesson : replyText
   });
 }
 
