@@ -1,15 +1,33 @@
+import { AudienceIcon } from "@/components/icons/AudienceIcon";
+import { JourneyIcon } from "@/components/icons/JourneyIcon";
 import { MarkIcon } from "@/components/icons/MarkIcon";
 import { MindIcon } from "@/components/icons/MindIcon";
+import { RecordIcon } from "@/components/icons/RecordIcon";
+import { TodayIcon } from "@/components/icons/TodayIcon";
 
 interface SidebarProps {
   mindName: string;
   activePage: string;
+  thinking: boolean;
   onChangePage: (page: string) => void;
 }
 
 const pages = ["Today", "Track Record", "Audience", "Journey"];
 
-export function Sidebar({ mindName, activePage, onChangePage }: SidebarProps) {
+function drawIcon(page: string, lit: boolean) {
+  if (page === "Today") {
+    return <TodayIcon lit={lit} />;
+  }
+  if (page === "Track Record") {
+    return <RecordIcon lit={lit} />;
+  }
+  if (page === "Audience") {
+    return <AudienceIcon lit={lit} />;
+  }
+  return <JourneyIcon lit={lit} />;
+}
+
+export function Sidebar({ mindName, activePage, thinking, onChangePage }: SidebarProps) {
   return (
     <aside className="flex shrink-0 flex-col border-b border-[var(--edge)] bg-[var(--panel)]/40 px-4 py-4 sm:px-6 lg:w-[212px] lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
       <div className="flex items-center justify-between gap-3 lg:block">
@@ -21,9 +39,9 @@ export function Sidebar({ mindName, activePage, onChangePage }: SidebarProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 lg:hidden">
-          <MindIcon size={22} />
-          <p className="truncate text-[12px] text-[var(--muted)]">{mindName}</p>
+        <div className="flex items-center gap-2 lg:hidden">
+          <MindIcon size={22} thinking={thinking} />
+          <p className="truncate text-[12px] text-[var(--muted)]">{thinking ? "thinking" : mindName}</p>
         </div>
       </div>
 
@@ -37,7 +55,7 @@ export function Sidebar({ mindName, activePage, onChangePage }: SidebarProps) {
               onClick={function choose() {
                 onChangePage(page);
               }}
-              className={`relative shrink-0 rounded-[8px] px-3 py-2 text-left text-[13px] transition-colors duration-200 ${
+              className={`relative flex shrink-0 items-center gap-2.5 rounded-[8px] px-3 py-2 text-left text-[13px] transition-colors duration-200 ${
                 active ? "bg-[var(--edge)]/50 text-[var(--ink)]" : "text-[var(--faint)] hover:text-[var(--muted)]"
               }`}
             >
@@ -46,6 +64,7 @@ export function Sidebar({ mindName, activePage, onChangePage }: SidebarProps) {
                   active ? "opacity-100" : "opacity-0"
                 }`}
               />
+              <span className="shrink-0">{drawIcon(page, active)}</span>
               {page}
             </button>
           );
@@ -53,10 +72,12 @@ export function Sidebar({ mindName, activePage, onChangePage }: SidebarProps) {
       </nav>
 
       <div className="mt-auto hidden items-center gap-3 border-t border-[var(--edge)] pt-5 lg:flex">
-        <MindIcon />
+        <MindIcon thinking={thinking} />
         <div className="min-w-0 leading-tight">
           <p className="truncate text-[12.5px] font-medium text-[var(--ink)]">{mindName}</p>
-          <p className="text-[10.5px] text-[var(--faint)]">your Mind</p>
+          <p className={`text-[10.5px] ${thinking ? "text-[var(--accent)]" : "text-[var(--faint)]"}`}>
+            {thinking ? "thinking" : "your Mind"}
+          </p>
         </div>
       </div>
     </aside>
