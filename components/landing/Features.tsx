@@ -31,8 +31,8 @@ export function Features() {
   const frame = useReachedView<HTMLDivElement>({ once: true, showWhenPart: 0.3 });
 
   return (
-    <section className="py-20 md:py-32">
-      <div className="mx-auto max-w-5xl space-y-12 px-6">
+    <section className="overflow-x-hidden py-20 md:py-32">
+      <div className="mx-auto max-w-5xl space-y-12 px-5 sm:px-6">
         <RevealOnScroll>
           <div className="relative z-10 grid items-center gap-4 md:grid-cols-2 md:gap-12">
             <h2 className="text-balance text-4xl font-semibold tracking-tight">
@@ -47,7 +47,7 @@ export function Features() {
 
         <div
           ref={frame.holderRef}
-          className={`relative rounded-[18px] border bg-[var(--panel)]/40 p-3 transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] md:-mx-8 ${
+          className={`relative rounded-[18px] border bg-[var(--panel)]/40 p-2 transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] sm:p-3 lg:-mx-8 ${
             frame.reached
               ? "translate-y-0 border-[var(--edge)] opacity-100"
               : "translate-y-6 border-transparent opacity-0"
@@ -56,7 +56,7 @@ export function Features() {
           <DashboardPreview started={frame.reached} />
         </div>
 
-        <div className="relative mx-auto grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
+        <div className="relative mx-auto grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {points.map(function drawPoint(point, index) {
             return (
               <RevealOnScroll key={point.title} delayMs={index * 130}>
