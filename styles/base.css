@@ -10,6 +10,7 @@ body {
 }
 
 body {
+  overflow-x: hidden;
   background: var(--page);
   color: var(--ink);
   font-family: var(--font-sans);
