@@ -5,6 +5,7 @@ import { describeFailure } from "@/lib/errors/describeFailure";
 import type { MindsClient } from "./connectToMinds";
 import { chooseArchetype } from "./chooseArchetype";
 import { nameAliasForChannel, nameMindForChannel } from "./nameMindForChannel";
+import { readGivenMindId } from "./readGivenMindId";
 
 export async function wakeMind(
   client: MindsClient,
@@ -13,6 +14,15 @@ export async function wakeMind(
 ): Promise<Result<MindHandle>> {
   const wantedName = nameMindForChannel(channelTitle, channelId);
   const alias = nameAliasForChannel(channelId);
+
+  const given = readGivenMindId();
+  if (given.length > 0) {
+    const bound = await bindConversation(client, alias, given);
+    if (!bound.ok) {
+      return fail(bound.failure);
+    }
+    return succeed({ mindId: given, name: await readMindName(client, given), alias });
+  }
 
   const existing = await findExistingMind(client, wantedName);
   if (existing.ok) {
@@ -63,5 +73,14 @@ async function bindConversation(
     return succeed(true);
   } catch {
     return fail(describeFailure("mind_unavailable"));
+  }
+}
+
+async function readMindName(client: MindsClient, mindId: string): Promise<string> {
+  try {
+    const detail = await client.getMind(mindId);
+    return detail.name ?? "your Mind";
+  } catch {
+    return "your Mind";
   }
 }
