@@ -1,3 +1,18 @@
+export function stripTags(text: string): string {
+  return text
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li|h[1-6])>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function readLabelName(line: string): string {
   const found = line.match(/^\s*([A-Za-z][A-Za-z ]{1,18}):/);
   if (!found) {
@@ -17,7 +32,7 @@ function readTextAfterLabel(line: string): string {
 export function readLabelled(text: string, label: string): string {
   const wanted = label.toUpperCase();
 
-  for (const line of text.split(/\r?\n/)) {
+  for (const line of stripTags(text).split(/\r?\n/)) {
     if (readLabelName(line) === wanted) {
       return readTextAfterLabel(line);
     }
@@ -35,7 +50,7 @@ export function readMultiLineLabelled(text: string, label: string, nextLabels: s
   const collected: string[] = [];
   let collecting = false;
 
-  for (const line of text.split(/\r?\n/)) {
+  for (const line of stripTags(text).split(/\r?\n/)) {
     const name = readLabelName(line);
 
     if (name === wanted) {
