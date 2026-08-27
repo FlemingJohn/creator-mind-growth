@@ -20,7 +20,7 @@ export function Hero() {
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--page)] via-transparent to-[var(--page)]" />
 
-      <nav className="absolute left-0 right-0 top-0 z-20 mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
+      <nav className="absolute left-0 right-0 top-0 z-20 mx-auto flex max-w-5xl items-center justify-between px-5 py-6 sm:px-6">
         <span className="flex items-center gap-2.5">
           <MarkIcon size={20} />
           <span className="text-[13px] font-semibold tracking-tight">CMG</span>
@@ -33,10 +33,10 @@ export function Hero() {
         </Link>
       </nav>
 
-      <div className="relative z-10 max-w-3xl px-6 text-center">
+      <div className="relative z-10 max-w-3xl px-5 text-center sm:px-6">
         <p className="text-[12px] uppercase tracking-[0.18em] text-[var(--accent)]">Creator Mind Growth</p>
 
-        <h1 className="mt-5 text-balance text-5xl font-semibold leading-[1.08] tracking-tight sm:text-6xl">
+        <h1 className="mt-5 text-balance text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
           <span className="block text-[var(--muted)]">Your audience already told you</span>
           what to make next
         </h1>
