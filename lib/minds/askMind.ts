@@ -2,7 +2,7 @@ import type { MindReply } from "@/types/mind";
 import type { Result } from "@/types/result";
 import { fail, succeed } from "@/types/result";
 import { describeFailure } from "@/lib/errors/describeFailure";
-import { stripTags } from "./readReply";
+import { readPlainText } from "./keepSafeHtml";
 import type { MindsClient } from "./connectToMinds";
 
 const waitLimitInMs = 180000;
@@ -38,8 +38,8 @@ export async function askMind(
       return fail(describeFailure("mind_took_too_long"));
     }
 
-    const text = stripTags(outcome.reply?.messageText ?? "");
-    if (text.trim().length === 0) {
+    const text = outcome.reply?.messageText ?? "";
+    if (readPlainText(text).length === 0) {
       return fail(describeFailure("mind_reply_unreadable"));
     }
 
