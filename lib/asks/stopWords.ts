@@ -9,6 +9,7 @@ export const stopWords = new Set<string>([
   "great", "nice", "love", "loved", "best", "also", "still", "even", "back", "over",
   "after", "before", "next", "last", "first", "new", "old", "does", "did", "doing",
   "was", "been", "being", "were", "our", "ours", "yours", "mine", "him", "she", "he",
+  "where", "whose", "whom", "whether", "anyone", "everyone", "nobody",
   "right", "sure", "well", "okay", "true", "false", "real", "actual",
   "good", "bad", "big", "small", "long", "short", "hard", "easy", "fast",
   "slow", "high", "low", "full", "free", "open", "close", "next", "last",
