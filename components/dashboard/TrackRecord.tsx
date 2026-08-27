@@ -2,6 +2,7 @@ import type { TrackRecord as TrackRecordShape } from "@/types/call";
 import { CheckIcon } from "@/components/icons/CheckIcon";
 import { CrossIcon } from "@/components/icons/CrossIcon";
 import { Panel } from "@/components/ui/Panel";
+import { RichText } from "@/components/ui/RichText";
 
 interface TrackRecordProps {
   record: TrackRecordShape;
@@ -71,7 +72,7 @@ export function TrackRecord({ record }: TrackRecordProps) {
       {record.latestLesson ? (
         <div className="mt-auto border-t border-[var(--edge)] pt-4">
           <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[var(--faint)]">I changed my mind</p>
-          <p className="mt-1.5 line-clamp-5 text-[12.5px] leading-relaxed text-[var(--muted)]">{record.latestLesson}</p>
+          <RichText html={record.latestLesson} clampLines={5} className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--muted)]" />
         </div>
       ) : null}
     </Panel>
