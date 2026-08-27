@@ -5,7 +5,7 @@ import { describeFailure } from "@/lib/errors/describeFailure";
 import { readPlainText } from "./keepSafeHtml";
 import type { MindsClient } from "./connectToMinds";
 
-const waitLimitInMs = 180000;
+const waitLimitInMs = 280000;
 
 export async function askMind(
   client: MindsClient,
