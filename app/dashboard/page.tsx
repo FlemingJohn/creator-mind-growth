@@ -27,7 +27,7 @@ export default function DashboardPage() {
 
   if (dashboard.loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center">
+      <main className="flex min-h-screen items-center justify-center px-6">
         <ThinkingDots label="Opening" />
       </main>
     );
@@ -47,24 +47,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="flex h-screen overflow-hidden">
+    <main className="flex min-h-screen flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
       <Sidebar mindName={dashboard.data.mindName} activePage={activePage} onChangePage={setActivePage} />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-[18px] overflow-hidden p-7">
+      <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:p-6 lg:gap-[18px] lg:overflow-hidden lg:p-7">
         <GreetingBar
           channelTitle={dashboard.data.channel.title}
           headline={readHeadline(dashboard.data.asks.length, dashboard.data.nextCall !== null)}
           checkedAt={dashboard.data.checkedAt}
         />
 
-        {dashboard.failure ? (
-          <ErrorNotice failure={dashboard.failure} onRetry={dashboard.loadDashboard} />
-        ) : null}
+        {dashboard.failure ? <ErrorNotice failure={dashboard.failure} onRetry={dashboard.loadDashboard} /> : null}
 
-        <div className="grid min-h-0 flex-1 grid-cols-[1fr_300px] gap-[18px]">
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(260px,300px)] lg:gap-[18px]">
           <NextCall
             call={dashboard.data.nextCall}
             thinking={dashboard.thinking}
+            thinkingNote={dashboard.thinkingNote}
+            waitedSeconds={dashboard.waitedSeconds}
             onAsk={dashboard.askForCall}
             onAccept={dashboard.askForCall}
           />
