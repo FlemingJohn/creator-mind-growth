@@ -3,6 +3,7 @@ import { SparkIcon } from "@/components/icons/SparkIcon";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
+import { RichText } from "@/components/ui/RichText";
 import { ThinkingDots } from "@/components/ui/ThinkingDots";
 
 interface NextCallProps {
@@ -40,7 +41,7 @@ export function NextCall({ call, thinking, onAsk, onAccept }: NextCallProps) {
           <p className="text-[17px] font-medium leading-snug tracking-tight text-[var(--ink)]">{call.title}</p>
 
           <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[var(--faint)]">Why</p>
-          <p className="mt-1.5 line-clamp-4 text-[13.5px] leading-relaxed text-[var(--muted)]">{call.reason}</p>
+          <RichText html={call.reason} clampLines={4} className="mt-1.5 text-[13.5px] leading-relaxed text-[var(--muted)]" />
 
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge label="Risk" value={call.risk} />
