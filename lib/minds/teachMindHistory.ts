@@ -1,15 +1,14 @@
-import type { Comment } from "@/types/channel";
-import type { Channel } from "@/types/channel";
+import type { Channel, Comment } from "@/types/channel";
 import type { Result } from "@/types/result";
 import { fail, succeed } from "@/types/result";
 import { findAsks } from "@/lib/asks/findAsks";
 import { splitByMonth } from "@/lib/asks/splitByMonth";
-import { describeMonth } from "@/prompts/describeMonth";
-import { introduceChannel } from "@/prompts/introduceChannel";
+import type { MonthSummary } from "@/prompts/describeHistory";
+import { describeHistory } from "@/prompts/describeHistory";
 import type { MindsClient } from "./connectToMinds";
-import { askMind, tellMind } from "./askMind";
+import { tellMind } from "./askMind";
 
-const monthsToTeach = 8;
+const monthsToTeach = 6;
 
 export async function teachMindHistory(
   client: MindsClient,
@@ -17,13 +16,8 @@ export async function teachMindHistory(
   channel: Channel,
   comments: Comment[]
 ): Promise<Result<number>> {
-  const opened = await askMind(client, alias, introduceChannel(channel));
-  if (!opened.ok) {
-    return fail(opened.failure);
-  }
-
   const months = splitByMonth(comments).slice(-monthsToTeach);
-  let taught = 0;
+  const summaries: MonthSummary[] = [];
 
   for (let index = 0; index < months.length; index = index + 1) {
     const month = months[index];
@@ -34,17 +28,24 @@ export async function teachMindHistory(
       continue;
     }
 
-    const videoCount = countVideos(month.comments);
-    const message = describeMonth(month.month, videoCount, month.comments.length, asks);
-
-    const sent = await tellMind(client, alias, message);
-    if (!sent.ok) {
-      return fail(sent.failure);
-    }
-    taught = taught + 1;
+    summaries.push({
+      month: month.month,
+      videoCount: countVideos(month.comments),
+      commentCount: month.comments.length,
+      asks
+    });
   }
 
-  return succeed(taught);
+  if (summaries.length === 0) {
+    return succeed(0);
+  }
+
+  const sent = await tellMind(client, alias, describeHistory(channel, summaries));
+  if (!sent.ok) {
+    return fail(sent.failure);
+  }
+
+  return succeed(summaries.length);
 }
 
 function countVideos(comments: Comment[]): number {
