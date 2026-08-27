@@ -5,6 +5,7 @@ import type { Call } from "@/types/call";
 import type { DashboardData } from "@/types/dashboard";
 import type { Failure } from "@/types/result";
 import { callApi } from "@/lib/browser/callApi";
+import { readEventStream } from "@/lib/browser/readEventStream";
 
 const stepPace = 2200;
 
@@ -15,6 +16,8 @@ export function useDashboard() {
   const [connecting, setConnecting] = useState(false);
   const [connectStep, setConnectStep] = useState(0);
   const [thinking, setThinking] = useState(false);
+  const [thinkingNote, setThinkingNote] = useState("");
+  const [waitedSeconds, setWaitedSeconds] = useState(0);
 
   const loadDashboard = useCallback(async function load() {
     const outcome = await callApi<DashboardData>("/api/dashboard", "GET");
@@ -79,18 +82,41 @@ export function useDashboard() {
     }
 
     setThinking(true);
+    setThinkingNote("");
+    setWaitedSeconds(0);
     setFailure(null);
 
-    const outcome = await callApi<Call>("/api/call", "POST", { channelId: data.channel.channelId });
+    let landed: Call | null = null;
+    let stumble: Failure | null = null;
+
+    await readEventStream(
+      "/api/call/stream",
+      { channelId: data.channel.channelId },
+      {
+        onWaiting: function beat(seconds, note) {
+          setWaitedSeconds(seconds);
+          setThinkingNote(note);
+        },
+        onCall: function arrived(call) {
+          landed = call as Call;
+        },
+        onFailed: function broke(failure) {
+          stumble = failure as Failure;
+        }
+      }
+    );
 
     setThinking(false);
+    setThinkingNote("");
 
-    if (!outcome.ok) {
-      setFailure(outcome.failure);
+    if (stumble) {
+      setFailure(stumble);
       return;
     }
 
-    await loadDashboard();
+    if (landed) {
+      await loadDashboard();
+    }
   }
 
   function clearFailure() {
@@ -104,6 +130,8 @@ export function useDashboard() {
     connecting,
     connectStep,
     thinking,
+    thinkingNote,
+    waitedSeconds,
     connectChannel,
     askForCall,
     loadDashboard,
