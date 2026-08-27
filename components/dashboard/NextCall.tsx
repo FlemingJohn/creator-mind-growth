@@ -4,27 +4,18 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { RichText } from "@/components/ui/RichText";
-import { ThinkingDots } from "@/components/ui/ThinkingDots";
+import { ReasoningTrace } from "@/components/ui/ReasoningTrace";
 
 interface NextCallProps {
   call: Call | null;
   thinking: boolean;
-  thinkingNote: string;
+  thinkingSteps: string[];
   waitedSeconds: number;
   onAsk: () => void;
   onAccept: () => void;
 }
 
-function readClock(seconds: number): string {
-  if (seconds < 60) {
-    return seconds + "s";
-  }
-  const minutes = Math.floor(seconds / 60);
-  const rest = seconds % 60;
-  return minutes + "m " + String(rest).padStart(2, "0") + "s";
-}
-
-export function NextCall({ call, thinking, thinkingNote, waitedSeconds, onAsk, onAccept }: NextCallProps) {
+export function NextCall({ call, thinking, thinkingSteps, waitedSeconds, onAsk, onAccept }: NextCallProps) {
   return (
     <Panel grow>
       <div className="mb-4 flex items-center gap-2">
@@ -34,14 +25,7 @@ export function NextCall({ call, thinking, thinkingNote, waitedSeconds, onAsk, o
 
       {thinking ? (
         <div className="flex flex-1 flex-col justify-center gap-4">
-          <ThinkingDots label={thinkingNote.length > 0 ? thinkingNote : "Thinking"} />
-
-          <div className="flex items-center gap-3">
-            <span className="h-[3px] w-40 overflow-hidden rounded-full bg-[var(--edge)]">
-              <span className="block h-full w-1/3 animate-sweep rounded-full bg-[var(--accent)] opacity-70" />
-            </span>
-            <span className="text-[11.5px] tabular-nums text-[var(--faint)]">{readClock(waitedSeconds)}</span>
-          </div>
+          <ReasoningTrace steps={thinkingSteps} seconds={waitedSeconds} />
 
           <p className="max-w-[40ch] text-[12px] leading-relaxed text-[var(--faint)]">
             It is reading months of comments before it answers. This can take a few minutes.
@@ -50,7 +34,7 @@ export function NextCall({ call, thinking, thinkingNote, waitedSeconds, onAsk, o
       ) : null}
 
       {!thinking && !call ? (
-        <div className="flex flex-1 flex-col items-start justify-center gap-4">
+        <div className="flex flex-1 flex-col items-start gap-4">
           <p className="max-w-[34ch] text-[13.5px] leading-relaxed text-[var(--muted)]">
             Your Mind has read the comments. Ask it what to make and it will pick one thing.
           </p>
