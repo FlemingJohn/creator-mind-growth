@@ -16,7 +16,7 @@ export function useDashboard() {
   const [connecting, setConnecting] = useState(false);
   const [connectStep, setConnectStep] = useState(0);
   const [thinking, setThinking] = useState(false);
-  const [thinkingNote, setThinkingNote] = useState("");
+  const [thinkingSteps, setThinkingSteps] = useState<string[]>([]);
   const [waitedSeconds, setWaitedSeconds] = useState(0);
 
   const loadDashboard = useCallback(async function load() {
@@ -82,7 +82,7 @@ export function useDashboard() {
     }
 
     setThinking(true);
-    setThinkingNote("");
+    setThinkingSteps([]);
     setWaitedSeconds(0);
     setFailure(null);
 
@@ -95,7 +95,12 @@ export function useDashboard() {
       {
         onWaiting: function beat(seconds, note) {
           setWaitedSeconds(seconds);
-          setThinkingNote(note);
+          setThinkingSteps(function addStep(current) {
+            if (current[current.length - 1] === note) {
+              return current;
+            }
+            return [...current, note];
+          });
         },
         onCall: function arrived(call) {
           landed = call as Call;
@@ -107,7 +112,7 @@ export function useDashboard() {
     );
 
     setThinking(false);
-    setThinkingNote("");
+    setThinkingSteps([]);
 
     if (stumble) {
       setFailure(stumble);
@@ -130,7 +135,7 @@ export function useDashboard() {
     connecting,
     connectStep,
     thinking,
-    thinkingNote,
+    thinkingSteps,
     waitedSeconds,
     connectChannel,
     askForCall,
