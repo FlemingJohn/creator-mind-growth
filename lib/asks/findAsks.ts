@@ -3,6 +3,16 @@ import type { Comment } from "@/types/channel";
 import { countPhrases } from "./countPhrases";
 import { readRequestLines } from "./readRequestLines";
 
+function isStrongEnough(phrase: string, askCount: number, repeatAskerCount: number): boolean {
+  const isPair = phrase.includes(" ");
+
+  if (isPair) {
+    return askCount >= 3;
+  }
+
+  return askCount >= 5 && repeatAskerCount >= 1;
+}
+
 function readDirection(nowCount: number, beforeCount: number): AskDirection {
   if (beforeCount === 0 && nowCount > 0) {
     return "new";
@@ -24,7 +34,7 @@ export function findAsks(recent: Comment[], earlier: Comment[], howMany: number)
 
   for (const [phrase, count] of recentCounts) {
     const askCount = count.askerIds.size;
-    if (askCount < 3) {
+    if (!isStrongEnough(phrase, askCount, count.repeatAskerIds.size)) {
       continue;
     }
 
