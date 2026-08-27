@@ -18,8 +18,9 @@ import { replyWithFailure, replyWithValue } from "@/lib/errors/replyWithFailure"
 
 export const maxDuration = 300;
 
-const maxVideosToRead = 60;
+const maxVideosToRead = 45;
 const maxCommentsToRead = 1200;
+const commentsPerVideo = 60;
 
 export async function POST(request: NextRequest) {
   try {
@@ -101,9 +102,9 @@ async function readComments(
   videos: Video[],
   apiKey: string
 ): Promise<Result<Comment[]>> {
-  const wholeChannel = await readChannelComments(channelId, apiKey, maxCommentsToRead);
-  if (wholeChannel.ok && wholeChannel.value.length > 0) {
-    return wholeChannel;
+  const spreadOverTime = await readVideoComments(videos, apiKey, commentsPerVideo);
+  if (spreadOverTime.ok && spreadOverTime.value.length > 0) {
+    return spreadOverTime;
   }
-  return readVideoComments(videos, apiKey, 100);
+  return readChannelComments(channelId, apiKey, maxCommentsToRead);
 }
