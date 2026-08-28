@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
       trackRecord: buildTrackRecord(record.value.calls, record.value.latestLesson),
       asks: record.value.asks,
       ideaBoard: record.value.ideaBoard,
+      weakSpots: record.value.weakSpots,
       checkedAt: record.value.checkedAt
     };
 
