@@ -124,6 +124,35 @@ export function useDashboard() {
     }
   }
 
+  async function findIdeas() {
+    if (!data) {
+      return;
+    }
+
+    setThinking(true);
+    setThinkingSteps(["Searching your whole niche"]);
+    setWaitedSeconds(0);
+    setFailure(null);
+
+    const started = Date.now();
+    const timer = window.setInterval(function tick() {
+      setWaitedSeconds(Math.round((Date.now() - started) / 1000));
+    }, 1000);
+
+    const outcome = await callApi<unknown>("/api/ideas", "POST", { channelId: data.channel.channelId });
+
+    window.clearInterval(timer);
+    setThinking(false);
+    setThinkingSteps([]);
+
+    if (!outcome.ok) {
+      setFailure(outcome.failure);
+      return;
+    }
+
+    await loadDashboard();
+  }
+
   function clearFailure() {
     setFailure(null);
   }
@@ -139,6 +168,7 @@ export function useDashboard() {
     waitedSeconds,
     connectChannel,
     askForCall,
+    findIdeas,
     loadDashboard,
     clearFailure
   };
