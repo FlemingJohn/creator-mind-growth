@@ -51,7 +51,11 @@ export function TrackRecordPage({ record }: TrackRecordPageProps) {
                   </span>
                 </div>
 
-                <p className="mt-1 text-[11px] text-[var(--faint)]">{readLongDate(call.madeOn)}</p>
+                <p className="mt-1 text-[11px] text-[var(--faint)]">
+                  {readLongDate(call.madeOn)}
+                  <span className="opacity-50"> · </span>
+                  {call.answeredBy === "mind" ? "your Mind" : "standby model"}
+                </p>
 
                 <RichText html={call.reason} className="mt-2.5 text-[12.5px] leading-relaxed text-[var(--muted)]" />
 
