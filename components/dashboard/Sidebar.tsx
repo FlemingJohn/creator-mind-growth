@@ -1,4 +1,5 @@
 import { AudienceIcon } from "@/components/icons/AudienceIcon";
+import { IdeasIcon } from "@/components/icons/IdeasIcon";
 import { JourneyIcon } from "@/components/icons/JourneyIcon";
 import { MarkIcon } from "@/components/icons/MarkIcon";
 import { MindIcon } from "@/components/icons/MindIcon";
@@ -12,7 +13,7 @@ interface SidebarProps {
   onChangePage: (page: string) => void;
 }
 
-const pages = ["Today", "Track Record", "Audience", "Journey"];
+const pages = ["Today", "Ideas", "Track Record", "Audience", "Journey"];
 
 function drawIcon(page: string, lit: boolean) {
   if (page === "Today") {
@@ -20,6 +21,9 @@ function drawIcon(page: string, lit: boolean) {
   }
   if (page === "Track Record") {
     return <RecordIcon lit={lit} />;
+  }
+  if (page === "Ideas") {
+    return <IdeasIcon lit={lit} />;
   }
   if (page === "Audience") {
     return <AudienceIcon lit={lit} />;
