@@ -1,13 +1,16 @@
 import type { Ask } from "./ask";
 import type { Call } from "./call";
-import type { Channel } from "./channel";
+import type { Channel, Video } from "./channel";
 import type { MindHandle } from "./mind";
+import type { IdeaBoard } from "./trend";
 
 export interface ChannelRecord {
   channel: Channel;
   mind: MindHandle;
   calls: Call[];
   asks: Ask[];
+  videos: Video[];
+  ideaBoard: IdeaBoard | null;
   latestLesson: string | null;
   usualViewCount: number;
   checkedAt: string;
