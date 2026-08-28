@@ -1,6 +1,7 @@
 import type { Ask } from "./ask";
 import type { Channel } from "./channel";
 import type { Call, TrackRecord } from "./call";
+import type { IdeaBoard } from "./trend";
 
 export interface DashboardData {
   channel: Channel;
@@ -8,5 +9,6 @@ export interface DashboardData {
   nextCall: Call | null;
   trackRecord: TrackRecord;
   asks: Ask[];
+  ideaBoard: IdeaBoard | null;
   checkedAt: string;
 }
