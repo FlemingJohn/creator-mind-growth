@@ -1,3 +1,5 @@
+export type AnsweredBy = "mind" | "fallback";
+
 export type CallOutcome = "waiting" | "hit" | "miss";
 
 export interface Call {
@@ -12,6 +14,7 @@ export interface Call {
   matchedVideoId: string | null;
   verdict: string | null;
   judgedOn: string | null;
+  answeredBy: AnsweredBy;
 }
 
 export interface TrackRecord {
