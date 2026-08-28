@@ -11,6 +11,7 @@ import { NextCall } from "@/components/dashboard/NextCall";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { TrackRecord } from "@/components/dashboard/TrackRecord";
 import { TrackRecordPage } from "@/components/dashboard/TrackRecordPage";
+import { WeakPage } from "@/components/dashboard/WeakPage";
 import { useDashboard } from "@/components/dashboard/useDashboard";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { ThinkingDots } from "@/components/ui/ThinkingDots";
@@ -21,6 +22,9 @@ function readHeadline(page: string, askCount: number, hasCall: boolean): string 
   }
   if (page === "Ideas") {
     return "Three directions. One safe, one rising, one nobody has made.";
+  }
+  if (page === "Weak Spots") {
+    return "What is pulling this channel down.";
   }
   if (page === "Audience") {
     return "The real comments behind every count.";
@@ -107,6 +111,16 @@ export default function DashboardPage() {
             thinkingSteps={dashboard.thinkingSteps}
             waitedSeconds={dashboard.waitedSeconds}
             onFind={dashboard.findIdeas}
+          />
+        ) : null}
+
+        {activePage === "Weak Spots" ? (
+          <WeakPage
+            spots={data.weakSpots}
+            thinking={dashboard.thinking}
+            thinkingSteps={dashboard.thinkingSteps}
+            waitedSeconds={dashboard.waitedSeconds}
+            onAsk={dashboard.askWhatToStop}
           />
         ) : null}
 
