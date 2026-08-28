@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { connectToMinds } from "@/lib/minds/connectToMinds";
 import { askMind } from "@/lib/minds/askMind";
 import { readVerdictFromReply } from "@/lib/minds/readCallFromReply";
+import { askAzure, canAskAzure } from "@/lib/azure/askAzure";
 import { askForVerdict } from "@/prompts/askForVerdict";
 import { readChannelRecord } from "@/lib/store/readChannelRecord";
 import { saveVerdict } from "@/lib/store/saveCall";
@@ -47,20 +48,35 @@ export async function POST(request: NextRequest) {
     );
 
     const reply = await askMind(connection.value, record.value.mind.alias, question);
-    if (!reply.ok) {
-      return replyWithFailure(reply.failure);
+
+    let verdict = null;
+
+    if (reply.ok) {
+      const fromMind = readVerdictFromReply(reply.value.text);
+      if (fromMind.ok) {
+        verdict = fromMind.value;
+      }
     }
 
-    const verdict = readVerdictFromReply(reply.value.text);
-    if (!verdict.ok) {
-      return replyWithFailure(verdict.failure);
+    if (!verdict && canAskAzure()) {
+      const spare = await askAzure(question);
+      if (spare.ok) {
+        const fromSpare = readVerdictFromReply(spare.value);
+        if (fromSpare.ok) {
+          verdict = fromSpare.value;
+        }
+      }
+    }
+
+    if (!verdict) {
+      return replyWithFailure(describeFailure("mind_reply_unreadable"));
     }
 
     const saved = await saveVerdict(
       record.value.channel.channelId,
       call.callId,
-      verdict.value.outcome,
-      verdict.value.lesson,
+      verdict.outcome,
+      verdict.lesson,
       body.videoId ?? ""
     );
 
