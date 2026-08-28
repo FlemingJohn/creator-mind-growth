@@ -112,16 +112,19 @@ export async function POST(request: NextRequest) {
 
         clearInterval(beat);
 
-        let text = outcome.timedOut ? "" : (outcome.reply?.messageText ?? "");
-        let answeredBy: "mind" | "fallback" = "mind";
+        const fromMind = outcome.timedOut
+          ? null
+          : readCallFromReply(outcome.reply?.messageText ?? "", record.value.channel.channelId, "mind");
 
-        if (text.trim().length === 0) {
+        let call = fromMind && fromMind.ok ? fromMind : null;
+
+        if (!call) {
           if (!canAskAzure()) {
             stopWith(describeFailure("mind_took_too_long"));
             return;
           }
 
-          push("waiting", { seconds: 0, note: "Your Mind is out of cognition, using the standby model" });
+          push("waiting", { seconds: 0, note: "Your Mind could not answer, using the standby model" });
 
           const spare = await askAzure(question);
           if (!spare.ok) {
@@ -129,15 +132,13 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          text = spare.value;
-          answeredBy = "fallback";
-        }
+          const fromSpare = readCallFromReply(spare.value, record.value.channel.channelId, "fallback");
+          if (!fromSpare.ok) {
+            stopWith(fromSpare.failure);
+            return;
+          }
 
-        const call = readCallFromReply(text, record.value.channel.channelId, answeredBy);
-
-        if (!call.ok) {
-          stopWith(call.failure);
-          return;
+          call = fromSpare;
         }
 
         const saved = await saveCall(record.value.channel.channelId, call.value);
