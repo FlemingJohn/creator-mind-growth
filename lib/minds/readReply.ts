@@ -1,4 +1,4 @@
-import { keepInlineHtml, readPlainText } from "./keepSafeHtml";
+import { dropEmptyTags, keepInlineHtml, readPlainText } from "./keepSafeHtml";
 import { splitIntoBlocks } from "./splitIntoBlocks";
 
 function readLabelName(text: string): string {
@@ -69,7 +69,7 @@ export function readLabelledHtml(reply: string, label: string, nextLabels: strin
     }
   }
 
-  return collected.join(" ").trim();
+  return dropEmptyTags(collected.join(" ")).replace(/\s+/g, " ").trim();
 }
 
 export function readWordChoice(reply: string, label: string, allowed: string[]): string {
