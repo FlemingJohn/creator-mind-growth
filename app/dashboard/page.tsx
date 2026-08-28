@@ -5,6 +5,7 @@ import { AudienceAsks } from "@/components/dashboard/AudienceAsks";
 import { AudiencePage } from "@/components/dashboard/AudiencePage";
 import { ConnectChannel } from "@/components/dashboard/ConnectChannel";
 import { GreetingBar } from "@/components/dashboard/GreetingBar";
+import { IdeasPage } from "@/components/dashboard/IdeasPage";
 import { JourneyPage } from "@/components/dashboard/JourneyPage";
 import { NextCall } from "@/components/dashboard/NextCall";
 import { Sidebar } from "@/components/dashboard/Sidebar";
@@ -17,6 +18,9 @@ import { ThinkingDots } from "@/components/ui/ThinkingDots";
 function readHeadline(page: string, askCount: number, hasCall: boolean): string {
   if (page === "Track Record") {
     return "Every call it made, and how each one went.";
+  }
+  if (page === "Ideas") {
+    return "Three directions. One safe, one rising, one nobody has made.";
   }
   if (page === "Audience") {
     return "The real comments behind every count.";
@@ -94,6 +98,16 @@ export default function DashboardPage() {
 
             <AudienceAsks asks={data.asks} />
           </div>
+        ) : null}
+
+        {activePage === "Ideas" ? (
+          <IdeasPage
+            board={data.ideaBoard}
+            thinking={dashboard.thinking}
+            thinkingSteps={dashboard.thinkingSteps}
+            waitedSeconds={dashboard.waitedSeconds}
+            onFind={dashboard.findIdeas}
+          />
         ) : null}
 
         {activePage === "Track Record" ? (
