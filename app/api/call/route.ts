@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { connectToMinds } from "@/lib/minds/connectToMinds";
 import { askMind } from "@/lib/minds/askMind";
 import { readCallFromReply } from "@/lib/minds/readCallFromReply";
+import { askAzure, canAskAzure } from "@/lib/azure/askAzure";
 import { askForNextCall } from "@/prompts/askForNextCall";
 import { readChannelRecord } from "@/lib/store/readChannelRecord";
 import { saveCall } from "@/lib/store/saveCall";
@@ -23,12 +24,26 @@ export async function POST(request: NextRequest) {
       return replyWithFailure(connection.failure);
     }
 
-    const reply = await askMind(connection.value, record.value.mind.alias, askForNextCall());
-    if (!reply.ok) {
+    const question = askForNextCall();
+    const reply = await askMind(connection.value, record.value.mind.alias, question);
+
+    let answerText = "";
+    let answeredBy: "mind" | "fallback" = "mind";
+
+    if (reply.ok) {
+      answerText = reply.value.text;
+    } else if (canAskAzure()) {
+      const spare = await askAzure(question);
+      if (!spare.ok) {
+        return replyWithFailure(reply.failure);
+      }
+      answerText = spare.value;
+      answeredBy = "fallback";
+    } else {
       return replyWithFailure(reply.failure);
     }
 
-    const call = readCallFromReply(reply.value.text, record.value.channel.channelId);
+    const call = readCallFromReply(answerText, record.value.channel.channelId, answeredBy);
     if (!call.ok) {
       return replyWithFailure(call.failure);
     }
