@@ -1,11 +1,11 @@
-import type { Call } from "@/types/call";
+import type { AnsweredBy, Call } from "@/types/call";
 import type { Result } from "@/types/result";
 import { fail, succeed } from "@/types/result";
 import { describeFailure } from "@/lib/errors/describeFailure";
 import { readPlainText } from "./keepSafeHtml";
 import { readLabelled, readLabelledHtml, readWordChoice } from "./readReply";
 
-export function readCallFromReply(replyText: string, channelId: string): Result<Call> {
+export function readCallFromReply(replyText: string, channelId: string, answeredBy: AnsweredBy): Result<Call> {
   const title = readLabelled(replyText, "TITLE");
   const reason = readLabelledHtml(replyText, "REASON", ["RISK", "UPSIDE"]);
 
@@ -24,7 +24,8 @@ export function readCallFromReply(replyText: string, channelId: string): Result<
     outcome: "waiting",
     matchedVideoId: null,
     verdict: null,
-    judgedOn: null
+    judgedOn: null,
+    answeredBy
   });
 }
 
