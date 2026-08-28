@@ -42,6 +42,40 @@ Opening a fresh alias against the same Mind and asking what to make next
 returns an answer built on months of earlier conversation, with nothing
 passed in.
 
+## The standby model
+
+The Mind is what makes this product work. It is the only part that remembers
+across sessions, and every judgement in the right-hand column above is its.
+
+A Mind spends cognition to think. When that balance runs out the Mind stops
+answering, and the app would otherwise be dead in the water. So there is a
+standby model behind it: Azure OpenAI GPT-4o.
+
+It is a fallback, not the product.
+
+- The Mind is asked first, every time.
+- The standby model is only used when the Mind does not answer, and only if
+  Azure keys are present in `.env`.
+- Without Azure keys the app simply reports that the Mind is out of cognition.
+
+Every call records which one answered it, and the interface says so on the
+card and in the track record. Nothing is hidden behind the scenes.
+
+What the standby model cannot do is the point of the product. It has no memory
+of this creator, no record of what it advised last month, and no way to mark
+its own past calls. Those come from the Mind. When the standby model answers,
+you get a suggestion; when the Mind answers, you get a suggestion from
+something that remembers being wrong before.
+
+Set these to enable it:
+
+```
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=
+AZURE_OPENAI_DEPLOYMENT=your-gpt-4o-deployment
+AZURE_OPENAI_API_VERSION=2024-10-21
+```
+
 ## Running it
 
 Node 22 or newer.
