@@ -81,3 +81,26 @@ export function readWordChoice(reply: string, label: string, allowed: string[]):
 
   return match ?? allowed[0];
 }
+
+const refusalMarkers = [
+  "cognition credit",
+  "cognition credits",
+  "top-up",
+  "top up",
+  "parked at -",
+  "i cannot run",
+  "i can't run",
+  "unblock me",
+  "out of credits",
+  "credits i don't have",
+  "credits i do not have",
+  "go quiet for"
+];
+
+export function looksLikeRefusal(reply: string): boolean {
+  const lowered = readPlainText(reply).toLowerCase();
+
+  return refusalMarkers.some(function isMentioned(marker) {
+    return lowered.includes(marker);
+  });
+}
