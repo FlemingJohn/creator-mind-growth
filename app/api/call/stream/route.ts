@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { connectToMinds } from "@/lib/minds/connectToMinds";
 import { readCallFromReply } from "@/lib/minds/readCallFromReply";
+import { askAzure, canAskAzure } from "@/lib/azure/askAzure";
 import { askForNextCall } from "@/prompts/askForNextCall";
 import { readChannelRecord } from "@/lib/store/readChannelRecord";
 import { saveCall } from "@/lib/store/saveCall";
@@ -111,13 +112,28 @@ export async function POST(request: NextRequest) {
 
         clearInterval(beat);
 
-        if (outcome.timedOut) {
-          stopWith(describeFailure("mind_took_too_long"));
-          return;
+        let text = outcome.timedOut ? "" : (outcome.reply?.messageText ?? "");
+        let answeredBy: "mind" | "fallback" = "mind";
+
+        if (text.trim().length === 0) {
+          if (!canAskAzure()) {
+            stopWith(describeFailure("mind_took_too_long"));
+            return;
+          }
+
+          push("waiting", { seconds: 0, note: "Your Mind is out of cognition, using the standby model" });
+
+          const spare = await askAzure(question);
+          if (!spare.ok) {
+            stopWith(describeFailure("mind_took_too_long"));
+            return;
+          }
+
+          text = spare.value;
+          answeredBy = "fallback";
         }
 
-        const text = outcome.reply?.messageText ?? "";
-        const call = readCallFromReply(text, record.value.channel.channelId);
+        const call = readCallFromReply(text, record.value.channel.channelId, answeredBy);
 
         if (!call.ok) {
           stopWith(call.failure);
