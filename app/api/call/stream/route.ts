@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
       const client = connection.value;
       const alias = record.value.mind.alias;
-      const question = askForNextCall();
+      const question = askForNextCall(record.value.asks);
 
       let mark = "";
       try {
