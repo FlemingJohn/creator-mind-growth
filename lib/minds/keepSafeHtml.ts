@@ -85,7 +85,7 @@ function rebuildInlineTag(whole: string, rawName: string): string {
   return "<" + name + ">";
 }
 
-function dropEmptyTags(html: string): string {
+export function dropEmptyTags(html: string): string {
   let cleaned = html;
   for (let pass = 0; pass < 3; pass = pass + 1) {
     cleaned = cleaned.replace(/<([a-z]+)>\s*<\/>/gi, "");
