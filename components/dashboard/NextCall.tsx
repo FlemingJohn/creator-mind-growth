@@ -52,6 +52,7 @@ export function NextCall({ call, thinking, thinkingSteps, waitedSeconds, onAsk, 
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge label="Risk" value={call.risk} />
             <Badge label="Upside" value={call.upside} />
+            <Badge label="Answered by" value={call.answeredBy === "mind" ? "your Mind" : "standby model"} />
           </div>
 
           <div className="mt-auto flex flex-wrap gap-2.5 pt-5">
