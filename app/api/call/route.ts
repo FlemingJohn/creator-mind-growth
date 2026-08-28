@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       return replyWithFailure(connection.failure);
     }
 
-    const question = askForNextCall();
+    const question = askForNextCall(record.value.asks);
     const reply = await askMind(connection.value, record.value.mind.alias, question);
 
     let call = null;
