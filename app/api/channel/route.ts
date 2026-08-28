@@ -7,6 +7,8 @@ import { readVideos } from "@/lib/youtube/readVideos";
 import { readChannelComments, readVideoComments } from "@/lib/youtube/readComments";
 import { readUsualViewCount } from "@/lib/youtube/readUsualViewCount";
 import { findAsks } from "@/lib/asks/findAsks";
+import { findComplaints } from "@/lib/asks/findComplaints";
+import { findWeakVideos } from "@/lib/asks/findWeakVideos";
 import { splitByMonth } from "@/lib/asks/splitByMonth";
 import { connectToMinds } from "@/lib/minds/connectToMinds";
 import { wakeMind } from "@/lib/minds/wakeMind";
@@ -73,15 +75,24 @@ export async function POST(request: NextRequest) {
     const recent = months.at(-1)?.comments ?? comments.value;
     const earlier = months.at(-2)?.comments ?? [];
 
+    const usualViewCount = readUsualViewCount(videos.value);
+
     const saved = await saveChannelRecord({
       channel: channel.value,
       mind: mind.value,
       calls: [],
       videos: videos.value,
       ideaBoard: null,
+      weakSpots: {
+        complaints: findComplaints(comments.value, videos.value),
+        weakVideos: findWeakVideos(videos.value, usualViewCount, 4),
+        commentsRead: comments.value.length,
+        whatToStop: null,
+        stopSaidBy: null
+      },
       asks: findAsks(recent, earlier, 4),
       latestLesson: null,
-      usualViewCount: readUsualViewCount(videos.value),
+      usualViewCount,
       checkedAt: new Date().toISOString()
     });
 
