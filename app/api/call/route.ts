@@ -6,7 +6,7 @@ import { askAzure, canAskAzure } from "@/lib/azure/askAzure";
 import { askForNextCall } from "@/prompts/askForNextCall";
 import { readChannelRecord } from "@/lib/store/readChannelRecord";
 import { saveCall } from "@/lib/store/saveCall";
-import { readFailureFromError } from "@/lib/errors/describeFailure";
+import { describeFailure, readFailureFromError } from "@/lib/errors/describeFailure";
 import { replyWithFailure, replyWithValue } from "@/lib/errors/replyWithFailure";
 
 export const maxDuration = 300;
@@ -27,25 +27,27 @@ export async function POST(request: NextRequest) {
     const question = askForNextCall();
     const reply = await askMind(connection.value, record.value.mind.alias, question);
 
-    let answerText = "";
-    let answeredBy: "mind" | "fallback" = "mind";
+    let call = null;
 
     if (reply.ok) {
-      answerText = reply.value.text;
-    } else if (canAskAzure()) {
-      const spare = await askAzure(question);
-      if (!spare.ok) {
-        return replyWithFailure(reply.failure);
+      const fromMind = readCallFromReply(reply.value.text, record.value.channel.channelId, "mind");
+      if (fromMind.ok) {
+        call = fromMind;
       }
-      answerText = spare.value;
-      answeredBy = "fallback";
-    } else {
-      return replyWithFailure(reply.failure);
     }
 
-    const call = readCallFromReply(answerText, record.value.channel.channelId, answeredBy);
-    if (!call.ok) {
-      return replyWithFailure(call.failure);
+    if (!call && canAskAzure()) {
+      const spare = await askAzure(question);
+      if (spare.ok) {
+        const fromSpare = readCallFromReply(spare.value, record.value.channel.channelId, "fallback");
+        if (fromSpare.ok) {
+          call = fromSpare;
+        }
+      }
+    }
+
+    if (!call) {
+      return replyWithFailure(describeFailure("mind_reply_unreadable"));
     }
 
     const saved = await saveCall(record.value.channel.channelId, call.value);
