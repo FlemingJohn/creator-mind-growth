@@ -77,6 +77,8 @@ export async function POST(request: NextRequest) {
       channel: channel.value,
       mind: mind.value,
       calls: [],
+      videos: videos.value,
+      ideaBoard: null,
       asks: findAsks(recent, earlier, 4),
       latestLesson: null,
       usualViewCount: readUsualViewCount(videos.value),
